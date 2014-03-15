@@ -195,7 +195,9 @@ static int16_t clamp(int16_t x, int16_t max) {
 void langton_layer_step_ants(LangtonLayer *langton_layer) {
     LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
     LangtonAnt *ant;
-    uint8_t i;
+    uint8_t i, j;
+    bool duplicate;
+    GPoint toggled[10];
 
     // Turn ants
     for (i = 0; i < data->ant_count; i++) {
@@ -209,8 +211,17 @@ void langton_layer_step_ants(LangtonLayer *langton_layer) {
 
     // Update grid
     for (i = 0; i < data->ant_count; i++) {
-        // TODO: Deduplicate cells
-        toggle_cell_colour(data->grid, data->ants[i].point);
+        ant = &(data->ants[i]);
+        toggled[i] = ant->point;
+        duplicate = false;
+        for (j = 0; j < i; j++) {
+            if (gpoint_equal(&toggled[j], &(ant->point))) {
+                duplicate = true;
+            }
+        }
+        if (!duplicate) {
+            toggle_cell_colour(data->grid, ant->point);
+        }
     }
 
     // Advance ants
