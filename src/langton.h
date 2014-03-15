@@ -29,4 +29,7 @@ typedef struct {
 
 LangtonLayer *langton_layer_create(GRect frame, uint8_t ant_count);
 void langton_layer_destroy(LangtonLayer *langton_layer);
-void step_ants(LangtonLayer *langton_layer);
+void langton_layer_reset(LangtonLayer *langton_layer);
+void langton_layer_add_ant(LangtonLayer *langton_layer);
+void langton_layer_remove_ant(LangtonLayer *langton_layer);
+void langton_layer_step_ants(LangtonLayer *langton_layer);

@@ -26,7 +26,7 @@ static uint8_t *new_grid_data(GSize size) {
     data_size = header.row_size_bytes * size.h + sizeof(_bitmap_header);
     data = (uint8_t *) malloc(data_size);
     if (data == NULL) {
-        APP_LOG(APP_LOG_LEVEL_WARNING, "NULL data!");
+        APP_LOG(APP_LOG_LEVEL_ERROR, "NULL data!");
         return NULL;
     }
 
@@ -34,6 +34,7 @@ static uint8_t *new_grid_data(GSize size) {
     memcpy(data, &header, sizeof(_bitmap_header));
     return data;
 }
+
 
 static GColor get_cell_colour(LangtonGrid grid, GPoint point) {
     uint8_t byte = grid.data[PIXEL_BYTE(point)];
@@ -62,43 +63,79 @@ static void langton_layer_update(LangtonLayer *langton_layer, GContext *ctx) {
 }
 
 
-LangtonLayer *langton_layer_create(GRect frame, uint8_t ant_count) {
-    LangtonLayer *langton_layer = layer_create_with_data(frame, sizeof(LangtonLayerData));
-    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+static void setup_layer_data(LangtonLayerData *data) {
+    uint8_t ant_count = data->ant_count;
+    GSize size = data->grid.size;
 
+    data->grid.data = new_grid_data(size);
+    data->grid.bitmap = gbitmap_create_with_data(data->grid.data);
+
+    for (uint8_t i = 0; i < ant_count; i++) {
+        data->ants[i].point = (GPoint) {
+            (size.w / (ant_count * 2)) + (size.w * i) / ant_count,
+            (size.h / (ant_count * 2)) + (size.h * i) / ant_count,
+        };
+        data->ants[i].direction = NORTH;
+    }
+}
+
+static void set_ant_count(LangtonLayerData *data, uint8_t ant_count) {
     if (ant_count < 1) {
         ant_count = 1;
     }
     if (ant_count > 10) {
         ant_count = 10;
     }
-
-    data->grid.size = frame.size;
-    data->grid.data = new_grid_data(frame.size);
-    data->grid.bitmap = gbitmap_create_with_data(data->grid.data);
     data->ant_count = ant_count;
+}
 
-    for (uint8_t i = 0; i < ant_count; i++) {
-        data->ants[i].point = (GPoint) {
-            (frame.size.w / (ant_count * 2)) + (frame.size.w * i) / ant_count,
-            (frame.size.h / (ant_count * 2)) + (frame.size.h * i) / ant_count,
-        };
-        data->ants[i].direction = NORTH;
-    }
 
+LangtonLayer *langton_layer_create(GRect frame, uint8_t ant_count) {
+    LangtonLayer *langton_layer = layer_create_with_data(frame, sizeof(LangtonLayerData));
+    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+    data->grid.size = frame.size;
     layer_set_update_proc(langton_layer, langton_layer_update);
+    set_ant_count(data, ant_count);
+    setup_layer_data(data);
     layer_mark_dirty(langton_layer);
     return langton_layer;
 }
 
 
-void langton_layer_destroy(LangtonLayer *langton_layer) {
-    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+static void cleanup_layer_data(LangtonLayerData *data) {
     if (data->grid.data != NULL) {
         gbitmap_destroy(data->grid.bitmap);
         free((void *) data->grid.data);
     }
+}
+
+
+void langton_layer_reset(LangtonLayer *langton_layer) {
+    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+    cleanup_layer_data(data);
+    setup_layer_data(data);
+    layer_mark_dirty(langton_layer);
+}
+
+
+void langton_layer_destroy(LangtonLayer *langton_layer) {
+    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+    cleanup_layer_data(data);
     layer_destroy(langton_layer);
+}
+
+
+void langton_layer_add_ant(LangtonLayer *langton_layer) {
+    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+    set_ant_count(data, data->ant_count + 1);
+    langton_layer_reset(langton_layer);
+}
+
+
+void langton_layer_remove_ant(LangtonLayer *langton_layer) {
+    LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
+    set_ant_count(data, data->ant_count - 1);
+    langton_layer_reset(langton_layer);
 }
 
 
@@ -145,7 +182,7 @@ static int16_t clamp(int16_t x, int16_t max) {
 };
 
 
-void step_ants(LangtonLayer *langton_layer) {
+void langton_layer_step_ants(LangtonLayer *langton_layer) {
     LangtonLayerData *data = (LangtonLayerData *)layer_get_data(langton_layer);
     LangtonAnt *ant;
     uint8_t i;

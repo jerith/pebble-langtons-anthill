@@ -13,15 +13,18 @@ static AppTimer *timer;
 
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "Button: select");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Resetting.");
+    langton_layer_reset(langton_layer);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "Button: up");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Adding ant and resetting.");
+    langton_layer_add_ant(langton_layer);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "Button: down");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Removing ant and resetting.");
+    langton_layer_remove_ant(langton_layer);
 }
 
 static void click_config_provider(void *context) {
@@ -33,7 +36,7 @@ static void click_config_provider(void *context) {
 
 static void ants_timer_callback(void *data) {
     for (uint8_t i = 0; i < STEPS_PER_UPDATE; i++) {
-        step_ants(langton_layer);
+        langton_layer_step_ants(langton_layer);
     }
     timer = app_timer_register(UPDATE_INTERVAL_MS, ants_timer_callback, NULL);
 }
@@ -42,10 +45,7 @@ static void window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
-    APP_LOG(APP_LOG_LEVEL_INFO, "Window bounds: (%d, %d), (%d, %d)",
-            bounds.size.w, bounds.size.h, bounds.origin.x, bounds.origin.y);
-
-    langton_layer = langton_layer_create(bounds, 4);
+    langton_layer = langton_layer_create(bounds, 1);
     layer_add_child(window_layer, langton_layer);
     timer = app_timer_register(UPDATE_INTERVAL_MS, ants_timer_callback, NULL);
 }
@@ -56,25 +56,22 @@ static void window_unload(Window *window) {
 }
 
 static void init(void) {
-  window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
-  window_set_window_handlers(window, (WindowHandlers) {
-    .load = window_load,
-    .unload = window_unload,
-  });
-  const bool animated = true;
-  window_stack_push(window, animated);
+    window = window_create();
+    window_set_click_config_provider(window, click_config_provider);
+    window_set_window_handlers(window, (WindowHandlers) {
+        .load = window_load,
+        .unload = window_unload,
+    });
+    const bool animated = true;
+    window_stack_push(window, animated);
 }
 
 static void deinit(void) {
-  window_destroy(window);
+    window_destroy(window);
 }
 
 int main(void) {
-  init();
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
-
-  app_event_loop();
-  deinit();
+    init();
+    app_event_loop();
+    deinit();
 }
