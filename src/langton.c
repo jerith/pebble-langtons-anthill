@@ -71,11 +71,21 @@ static void setup_layer_data(LangtonLayerData *data) {
     data->grid.bitmap = gbitmap_create_with_data(data->grid.data);
 
     for (uint8_t i = 0; i < ant_count; i++) {
-        data->ants[i].point = (GPoint) {
-            (size.w / (ant_count * 2)) + (size.w * i) / ant_count,
-            (size.h / (ant_count * 2)) + (size.h * i) / ant_count,
-        };
-        data->ants[i].direction = NORTH;
+        data->ants[i].point = (GPoint) { rand() % size.w, rand() % size.h };
+        switch (rand() % 4) {
+        case 0:
+            data->ants[i].direction = NORTH;
+            break;
+        case 1:
+            data->ants[i].direction = SOUTH;
+            break;
+        case 2:
+            data->ants[i].direction = EAST;
+            break;
+        case 4:
+            data->ants[i].direction = WEST;
+            break;
+        }
     }
 }
 
