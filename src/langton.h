@@ -7,6 +7,7 @@ typedef enum { NORTH, SOUTH, EAST, WEST } LangtonDirection;
 typedef struct {
     GSize size;
     uint8_t *data;
+    GBitmap *bitmap;
 } LangtonGrid;
 
 

@@ -3,8 +3,8 @@
 #include "langton.h"
 
 
-#define UPDATE_INTERVAL_MS 200
-#define STEPS_PER_UPDATE 10
+#define UPDATE_INTERVAL_MS 100
+#define STEPS_PER_UPDATE 20
 
 
 static Window *window;
