@@ -1,0 +1,17 @@
+{
+  "uuid": "dd50edc4-2489-427b-96cf-6b0333e9dbbb",
+  "shortName": "Langton's Anthill",
+  "longName": "Langton's Anthill",
+  "companyName": "jerith",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
