@@ -1,9 +1,10 @@
 pebble-langtons-anthill
 =======================
 
-Pebble app that runs simulations of
-[Langton's Ant](http://en.wikipedia.org/wiki/Langton%27s_ant) on the watch
-display.
+[Langton's Ant](http://en.wikipedia.org/wiki/Langton%27s_ant) is a
+two-dimensional Turing machine with a very simple set of rules but complicated
+emergent behaviour. Langton's Anthill simulates one or more ants on a toroidal
+Pebble-sized field.
 
 Build status: ![status](https://cloudpebble.net/ide/project/42197/status.png)
 
