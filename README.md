@@ -5,7 +5,7 @@ Pebble app that runs simulations of
 [Langton's Ant](http://en.wikipedia.org/wiki/Langton%27s_ant) on the watch
 display.
 
-Build status: ![status](https://cloudpebble.net/ide/project/1232/status.png)
+Build status: ![status](https://cloudpebble.net/ide/project/42197/status.png)
 
 Link to latest successfully built app bundle as soon as the spectacularly
 awesome [CloudPebble](http://cloudpebble.net) supports it.
