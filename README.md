@@ -16,6 +16,12 @@ License
 
 The code uses the MIT license. See the LICENSE file for details.
 
+One of the images used in the appstore makes use of the
+[Pebble UI Template](https://github.com/mcongrove/PebbleUI) project, which is
+available under a
+[Creative Commons](http://creativecommons.org/licenses/by-sa/4.0/deed.en_US)
+license.
+
 Making it work
 --------------
 
