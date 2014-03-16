@@ -6,10 +6,12 @@ two-dimensional Turing machine with a very simple set of rules but complicated
 emergent behaviour. Langton's Anthill simulates one or more ants on a toroidal
 Pebble-sized field.
 
-Build status: ![status](https://cloudpebble.net/ide/project/42197/status.png)
+Build status: ![Build status](https://cloudpebble.net/ide/project/42197/status.png)
 
 Link to latest successfully built app bundle as soon as the spectacularly
 awesome [CloudPebble](http://cloudpebble.net) supports it.
+
+Appstore: [![Langton's Anthill on the Pebble appstore](http://pblweb.com/badge/5324a390d7d0f23827000184/orange/small/)](http://pblweb.com/appstore/5324a390d7d0f23827000184)
 
 License
 -------
